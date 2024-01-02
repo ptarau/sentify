@@ -14,11 +14,6 @@ def get_nlp(lang):
         return spacy.load('en_core_web_lg')
 
 
-def file2string(fname):
-    with open(fname, 'r') as f:
-        return f.read()
-
-
 class Segmenter:
     def __init__(self, lang='en'):
         self.lang = lang

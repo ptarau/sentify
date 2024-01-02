@@ -1,5 +1,4 @@
 import os
-from sentify.config import CF
 
 
 def ensure_path(fname):

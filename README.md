@@ -2,7 +2,9 @@
 
 It currently handles local and remote *txt* and *pdf* files as well as Wikipedia *wikipage* given by their title.
 
-See code in sentify.sentify for uses and tests.
+See code in sentify.main function *sentify* for the simple, all in one API.
+
+See tests/tests.py for testing out the API on several use cases.
 
 Enjoy,
 

@@ -2,6 +2,7 @@ from smart_open import open as xopen
 from pdfminer.high_level import extract_text
 from sentify.wikifetch import page2text
 from sentify.segmenter import Segmenter
+from sentify.config import CF
 from sentify.tools import *
 
 
