@@ -3,7 +3,7 @@ import setuptools
 
 import sentify
 
-with open('requirements.txt') as f:
+with open('sentify/requirements.txt') as f:
     required = f.read().splitlines()
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -21,7 +21,7 @@ setup(name='sentify',
       packages=setuptools.find_packages(),
       package_data={
           'sentify': [
-            '*.png'
+            '*.txt'
           ]
       },
       include_package_data=True,

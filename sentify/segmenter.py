@@ -1,11 +1,17 @@
 import spacy
+import spacy.cli
 
 
 def get_nlp(lang):
-    if lang in ('en', 'ca', 'au'):
-        return spacy.load('en_core_web_sm')
-    else:
+    langs = ('en', 'ca', 'au')
+    if lang not in langs:
+        print('*** lang assumed to be in: ', langs)
         return None
+    try:
+        return spacy.load('en_core_web_lg')
+    except Exception:
+        spacy.cli.download("en_core_web_lg")
+        return spacy.load('en_core_web_lg')
 
 
 def file2string(fname):
