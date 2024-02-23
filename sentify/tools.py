@@ -32,16 +32,17 @@ def file2text(fname):
 
 
 def sents2file(sents, fname):
-    assert sents, '*** no sentences saved to: ' + fname
+    assert sents, 'no sents sent to: ' + fname
+    assert isinstance(sents, list), 'expected list of sents, got: ' + str(type(sents))
     ensure_path(fname)
-    with open(fname, 'w') as g:
-        for sent in sents:
-            print(sent, file=g)
+    with open(fname, 'w') as f:
+        for x in sents:
+            print(x, file=f)
 
 
 def file2sents(fname):
     with open(fname, 'r') as f:
-        return list(f.readline())
+        return list(f.readlines())
 
 
 def pdf_cleaner(text, minline=4):
@@ -82,11 +83,3 @@ def sent_cleaner(sents):
     if not cleans:
         print('*** NO CLEAN SENT FOUND IN:', sents)
     return cleans
-
-
-def sents2file(sents, fname):
-    assert sents, 'no sents sent to: ' + fname
-    ensure_path(fname)
-    with open(fname, 'w') as f:
-        for x in sents:
-            print(x, file=f)
