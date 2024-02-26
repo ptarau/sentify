@@ -1,6 +1,8 @@
 import spacy
 import spacy.cli
 
+#spacy_model='en_core_web_lg'
+spacy_model='en_core_web_sm'
 
 def get_nlp(lang):
     langs = ('en', 'ca', 'au')
@@ -9,10 +11,10 @@ def get_nlp(lang):
         print('*** lang assumed to be in: ', langs)
         return None
     try:
-        nlp= spacy.load('en_core_web_lg')
+        nlp= spacy.load(spacy_model)
     except Exception:
-        spacy.cli.download("en_core_web_lg")
-        nlp= spacy.load('en_core_web_lg')
+        spacy.cli.download(spacy_model)
+        nlp= spacy.load(spacy_model)
     nlp.max_length = 5000000 # default 100000 too small
     return nlp
 
