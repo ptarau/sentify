@@ -4,14 +4,17 @@ import spacy.cli
 
 def get_nlp(lang):
     langs = ('en', 'ca', 'au')
+
     if lang not in langs:
         print('*** lang assumed to be in: ', langs)
         return None
     try:
-        return spacy.load('en_core_web_lg')
+        nlp= spacy.load('en_core_web_lg')
     except Exception:
         spacy.cli.download("en_core_web_lg")
-        return spacy.load('en_core_web_lg')
+        nlp= spacy.load('en_core_web_lg')
+    nlp.max_length = 5000000 # default 100000 too small
+    return nlp
 
 
 class Segmenter:
