@@ -1,35 +1,37 @@
-import spacy
-import spacy.cli
+import stanza
 
-#spacy_model='en_core_web_lg'
-spacy_model='en_core_web_sm'
+STANZA_REUSE_RESOURCES = 2  # hidden deep down in Stanza
 
-def get_nlp(lang):
-    langs = ('en', 'ca', 'au')
 
-    if lang not in langs:
-        print('*** lang assumed to be in: ', langs)
-        return None
-    try:
-        nlp= spacy.load(spacy_model)
-    except Exception:
-        spacy.cli.download(spacy_model)
-        nlp= spacy.load(spacy_model)
-    nlp.max_length = 5000000 # default 100000 too small
-    return nlp
+def get_nlp(batch=64):
+    return stanza.Pipeline(processors='tokenize',
+                           download_method=STANZA_REUSE_RESOURCES,
+                           logging_level='CRITICAL',
+                           use_gpu=False, tokenize_batch_size=batch)
 
 
 class Segmenter:
+
     def __init__(self, lang='en'):
         self.lang = lang
-        self.nlp = get_nlp(self.lang)
+        self.nlp = get_nlp()
 
     def text2sents(self, text):
         assert self.nlp is not None
         assert text
-        text = " ".join(text.split())
+
         doc = self.nlp(text)
-        sents = [str(s) for s in doc.sents]
+
+        sents = []
+        for sent in doc.sentences:
+
+            toks = []
+            for token in sent.tokens:
+                toks.append(token.text)
+
+            sent_text = " ".join(toks)
+
+            sents.append(sent_text)
         return sents
 
 
@@ -43,16 +45,16 @@ def test_segmenter():
     print(seg.text2sents(
         """Dr. Cat, 3.14 years old, sits on the mat. 
          Mr. Dog, old and Texas-based, barks at her.
-        
+
          """
     ))
 
     print(seg.text2sents(
         """
             Who cares? 
-            
+
             I do!
-   
+
         """
     ))
 

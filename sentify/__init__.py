@@ -1,3 +1,3 @@
 # from sentify.main import sentify
 
-__version__ = "0.3.7"
+__version__ = "0.5.0"

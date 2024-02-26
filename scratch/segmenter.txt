@@ -1,0 +1,63 @@
+import os
+import spacy
+import spacy.cli
+
+spacy_model='en_core_web_sm'
+#spacy_model='./en_core_web_sm-3.7.1-py3-none-any.whl'
+
+def get_nlp(lang):
+    langs = ('en', 'ca', 'au')
+
+    if lang not in langs:
+        print('*** lang assumed to be in: ', langs)
+        return None
+    try:
+        nlp= spacy.load(spacy_model)
+    except Exception:
+        #spacy.cli.download(spacy_model,('--user',))
+        spacy.cli.download(spacy_model)
+        nlp= spacy.load(spacy_model)
+    nlp.max_length = 5000000 # default 100000 too small
+    return nlp
+
+
+class Segmenter:
+    def __init__(self, lang='en'):
+        self.lang = lang
+        self.nlp = get_nlp(self.lang)
+
+    def text2sents(self, text):
+        assert self.nlp is not None
+        assert text
+        text = " ".join(text.split())
+        doc = self.nlp(text)
+        sents = [str(s) for s in doc.sents]
+        return sents
+
+
+def segment_text(text):
+    seg = Segmenter()
+    return seg.text2sents(text)
+
+
+def test_segmenter():
+    seg = Segmenter()
+    print(seg.text2sents(
+        """Dr. Cat, 3.14 years old, sits on the mat. 
+         Mr. Dog, old and Texas-based, barks at her.
+        
+         """
+    ))
+
+    print(seg.text2sents(
+        """
+            Who cares? 
+            
+            I do!
+   
+        """
+    ))
+
+
+if __name__ == "__main__":
+    test_segmenter()
