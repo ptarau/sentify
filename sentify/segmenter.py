@@ -1,9 +1,17 @@
+from pathlib import Path
 import stanza
+from sentify.tools import exists_file
 
 STANZA_REUSE_RESOURCES = 2  # hidden deep down in Stanza
 
 
-def get_nlp(batch=64):
+def home_dir():
+    return str(Path.home())
+
+
+def get_nlp(lang='en',batch=64):
+    if not exists_file(home_dir() + '/stanza_resources/' + lang):
+        stanza.download(lang)
     return stanza.Pipeline(processors='tokenize',
                            download_method=STANZA_REUSE_RESOURCES,
                            logging_level='CRITICAL',
