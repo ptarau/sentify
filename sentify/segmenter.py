@@ -1,45 +1,19 @@
 from pathlib import Path
-import stanza
-from sentify.tools import exists_file
-
-STANZA_REUSE_RESOURCES = 2  # hidden deep down in Stanza
-
-
-def home_dir():
-    return str(Path.home())
-
-
-def get_nlp(lang='en',batch=64):
-    if not exists_file(home_dir() + '/stanza_resources/' + lang):
-        stanza.download(lang)
-    return stanza.Pipeline(processors='tokenize',
-                           download_method=STANZA_REUSE_RESOURCES,
-                           logging_level='CRITICAL',
-                           use_gpu=False, tokenize_batch_size=batch)
+import pysbd
 
 
 class Segmenter:
 
     def __init__(self, lang='en'):
         self.lang = lang
-        self.nlp = get_nlp()
+        self.nlp = pysbd.Segmenter(language=lang, clean=False)
 
     def text2sents(self, text):
+        text=" ".join(text.split())
         assert self.nlp is not None
         assert text
 
-        doc = self.nlp(text)
-
-        sents = []
-        for sent in doc.sentences:
-
-            toks = []
-            for token in sent.tokens:
-                toks.append(token.text)
-
-            sent_text = " ".join(toks)
-
-            sents.append(sent_text)
+        sents = self.nlp.segment(text)
         return sents
 
 
