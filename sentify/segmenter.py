@@ -12,6 +12,7 @@ class Segmenter:
         text=" ".join(text.split())
         assert self.nlp is not None
         assert text
+        text=text.replace("\u3002",'.') # for Chinese dot
 
         sents = self.nlp.segment(text)
         return sents
