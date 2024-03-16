@@ -1,3 +1,4 @@
+from time import time
 from smart_open import open as xopen
 from pdfminer.high_level import extract_text
 from sentify.wikifetch import page2text
@@ -146,5 +147,13 @@ def test_main():
     sents2file(sents, outfname)
 
 
+def timings(url='https://www.gutenberg.org/cache/epub/2600/pg2600.txt'):
+    t1 = time()
+    _ = sentify('url', url)
+    t2 = time()
+    print("TIME sentify:", round(t2 - t1, 2))
+
+
 if __name__ == "__main__":
-    test_main()
+    # test_main()
+    timings()
