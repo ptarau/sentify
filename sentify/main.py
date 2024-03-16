@@ -7,12 +7,14 @@ from sentify.config import CF
 from sentify.tools import *
 
 
-def sentify(doc_type, doc_name, clean=True, store=None, timings=False):
+def sentify(doc_type, doc_name, clean=True, store=None, return_timings=False):
     """
     converts a url, a wikipage or a pdf file to
     a list of sentences, ready for NLP or LLM processing
     """
     if store is not None and exists_file(store):
+        if return_timings:
+            return file2sents(store), 0,0
         return file2sents(store)
 
     t1 = time()
@@ -28,7 +30,7 @@ def sentify(doc_type, doc_name, clean=True, store=None, timings=False):
 
     if store is not None:
         sents2file(sents, store)
-    if timings:
+    if return_timings:
         return sents, t2 - t1, t3 - t1
     return sents
 
