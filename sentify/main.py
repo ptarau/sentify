@@ -7,7 +7,7 @@ from sentify.config import CF
 from sentify.tools import *
 
 
-def sentify(doc_type, doc_name, clean=True, store=None):
+def sentify(doc_type, doc_name, clean=True, store=None, timings=False):
     """
     converts a url, a wikipage or a pdf file to
     a list of sentences, ready for NLP or LLM processing
@@ -15,17 +15,21 @@ def sentify(doc_type, doc_name, clean=True, store=None):
     if store is not None and exists_file(store):
         return file2sents(store)
 
+    t1 = time()
     text = textify(doc_type, doc_name)
+    t2 = time()
 
     seg = Segmenter()
     sents = seg.text2sents(text)
+    t3 = time()
 
     if clean:
         sents = sent_cleaner(sents)
 
     if store is not None:
         sents2file(sents, store)
-
+    if timings:
+        return sents, t2 - t1, t3 - t1
     return sents
 
 
@@ -55,6 +59,9 @@ def textify(doc_type, doc_name):
         # wikipage
         text = page2text(doc_name)
 
+    text = text.strip()
+
+    assert text and len(text) > 10, f"Unable to extract text from {doc_type} {doc_name}"
     return text
 
 
@@ -98,11 +105,14 @@ def url2file(url, fname):
     text2file(text, fname)
 
 
-def pdf2text(pdf_or_stream, minline=4):
+def pdf2text(pdf_or_stream, minline=4, trace=1):
     """
     extracts a text string from a PDF file using pdfminer
     """
+    if trace: print('!!! ENTER pdf2text')
     text = extract_text(pdf_or_stream)
+    if trace: print('!!! EXITED pdf2text', len(text))
+    # print("PDF EXTRACTED:",text)
     text = pdf_cleaner(text, minline=minline)
     return text
 
@@ -117,43 +127,64 @@ def pdf2tname(pdf, tname, minline=4, minsize=32):
 
 
 def test_main():
+    print()
     url = 'https://raw.githubusercontent.com/ptarau/recursors/main/TODO.txt'
     fname = CF.OUT + 'txt.txt'
     sents = sentify('url', url)
     print(sents)
     if sents:
         sents2file(sents, fname)
-
+    print()
     url = 'https://aclanthology.org/W04-3252.pdf'
+    print(url)
     sents = sentify('url', url)
     fname = CF.OUT + 'pdf.txt'
     sents2file(sents, fname)
+    print()
 
     page = 'logic_programming'
+    print(page)
     sents = sentify('wikipage', page)
     outfname = CF.OUT + f'{page}.txt'
     sents2file(sents, outfname)
+    print()
 
     infname = outfname
     sents = sentify('txt', infname, clean=False)
     outfname = CF.OUT + 'same.txt'
+    print(infname, '=>', outfname)
     sents2file(sents, outfname)
+    print()
 
     url = 'https://arxiv.org/pdf/1909.07328.pdf'
     infname = CF.IN + "soft_unif.pdf"
     url2bin(url, infname)
+    print(url, infname)
     sents = sentify('pdf', infname, clean=True)
     outfname = CF.OUT + 'soft_unif.txt'
     sents2file(sents, outfname)
+    print()
 
+
+def test_bad1():
+    url = 'https://www-public.imtbs-tsp.eu/~gibson/Teaching/CSC4504/ReadingMaterial/KnuthMoore75.pdf'
+    sents = sentify('url', url)
+    assert sents, url
+
+def test_bad():
+    fname = 'OUT/same.txt'
+    sents = sentify('txt', fname)
+    print('RES SENTS:',len(sents))
 
 def timings(url='https://www.gutenberg.org/cache/epub/2600/pg2600.txt'):
     t1 = time()
-    _ = sentify('url', url)
+    print(url)
+    sents = sentify('url', url)
     t2 = time()
-    print("TIME sentify:", round(t2 - t1, 2))
+    print("TIME sentify:", round(t2 - t1, 2), 'sents:', len(sents))
 
 
 if __name__ == "__main__":
-    # test_main()
-    timings()
+    #test_main()
+    # timings()
+    test_bad()

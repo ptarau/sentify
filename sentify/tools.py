@@ -32,7 +32,7 @@ def file2text(fname):
 
 
 def sents2file(sents, fname):
-    assert sents, 'no sents sent to: ' + fname
+    assert sents, 'no sentences written to: ' + fname
     assert isinstance(sents, list), 'expected list of sents, got: ' + str(type(sents))
     ensure_path(fname)
     with open(fname, 'w') as f:
@@ -46,12 +46,15 @@ def file2sents(fname):
 
 
 def pdf_cleaner(text, minline=4):
+    assert text
     text = text.replace('-\n', '')
     lines = []
-    for line in text.split('\n'):
-        if len(line) < minline: continue
-        if line.isnumeric(): continue
-        lines.append(line)
+    for para in text.split('\n\n'):
+        for line in para.split('\n'):
+            if len(line) < minline: continue
+            if line.isnumeric(): continue
+            lines.append(line)
+        lines.append('\n')
     text = "\n".join(lines)
     return text
 
