@@ -1,0 +1,1 @@
+pip3 install -e . --config-settings editable_mode=compat
