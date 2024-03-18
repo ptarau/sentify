@@ -19,6 +19,7 @@ def sentify(doc_type, doc_name, clean=True, store=None, return_timings=False):
 
     t1 = time()
     text = textify(doc_type, doc_name)
+
     t2 = time()
 
     seg = Segmenter()
@@ -31,7 +32,7 @@ def sentify(doc_type, doc_name, clean=True, store=None, return_timings=False):
     if store is not None:
         sents2file(sents, store)
     if return_timings:
-        return sents, t2 - t1, t3 - t1
+        return sents, t2 - t1, t3 - t2
     return sents
 
 
