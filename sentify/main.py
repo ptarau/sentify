@@ -188,6 +188,6 @@ def timings(url='https://www.gutenberg.org/cache/epub/2600/pg2600.txt'):
 
 
 if __name__ == "__main__":
-    #test_main()
-    # timings()
-    test_bad()
+    test_main()
+    #timings()
+    #test_bad()
