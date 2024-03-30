@@ -1,4 +1,5 @@
 from time import time
+import subprocess
 from smart_open import open as xopen
 from pdfminer.high_level import extract_text
 from sentify.wikifetch import page2text
@@ -14,7 +15,7 @@ def sentify(doc_type, doc_name, clean=True, store=None, return_timings=False):
     """
     if store is not None and exists_file(store):
         if return_timings:
-            return file2sents(store), 0,0
+            return file2sents(store), 0, 0
         return file2sents(store)
 
     t1 = time()
@@ -108,7 +109,7 @@ def url2file(url, fname):
     text2file(text, fname)
 
 
-def pdf2text(pdf_or_stream, minline=4, trace=1):
+def alt_pdfXtext(pdf_or_stream, minline=4, trace=1):
     """
     extracts a text string from a PDF file using pdfminer
     """
@@ -117,6 +118,38 @@ def pdf2text(pdf_or_stream, minline=4, trace=1):
     if trace: print('!!! EXITED pdf2text', len(text))
     # print("PDF EXTRACTED:",text)
     text = pdf_cleaner(text, minline=minline)
+    return text
+
+
+def pdf2text(pdf_or_stream, minline=4, trace=1):
+    """
+    pdf to txt conversion with external tool - if availble
+    (on Mac, install pdftotext as part of "poppler tools")
+    otherwise, we use pdfminer
+    """
+    if trace: print('!!! ENTER pdf2text')
+    try:
+        txt = "__temp__.txt"
+        pdf = "__temp__.pdf"
+        if not isinstance(pdf_or_stream, str):
+            bytes = pdf_or_stream.read()
+            with open(pdf, 'wb') as g:
+                g.write(bytes)
+        else:
+            pdf = pdf_or_stream
+
+        subprocess.run(["pdftotext", "-q", pdf, txt])
+
+        if exists_file(pdf): remove_file(pdf)
+        text = file2text(txt)
+        remove_file(txt)
+        if trace: print('!!! pdftotext used')
+    except FileNotFoundError:
+        text = extract_text(pdf_or_stream)
+        if trace: print('!!! pdfminer used')
+
+    text = pdf_cleaner(text, minline=minline)
+    if trace: print('!!! EXITED pdf2text', len(text))
     return text
 
 
@@ -174,10 +207,12 @@ def test_bad1():
     sents = sentify('url', url)
     assert sents, url
 
+
 def test_bad():
     fname = 'OUT/same.txt'
     sents = sentify('txt', fname)
-    print('RES SENTS:',len(sents))
+    print('RES SENTS:', len(sents))
+
 
 def timings(url='https://www.gutenberg.org/cache/epub/2600/pg2600.txt'):
     t1 = time()
@@ -189,5 +224,5 @@ def timings(url='https://www.gutenberg.org/cache/epub/2600/pg2600.txt'):
 
 if __name__ == "__main__":
     test_main()
-    #timings()
-    #test_bad()
+    # timings()
+    # test_bad()
