@@ -109,7 +109,7 @@ def url2file(url, fname):
     text2file(text, fname)
 
 
-def alt_pdfXtext(pdf_or_stream, minline=4, trace=1):
+def alt_pdf2text(pdf_or_stream, minline=4, trace=1):
     """
     extracts a text string from a PDF file using pdfminer
     """
@@ -127,26 +127,31 @@ def pdf2text(pdf_or_stream, minline=4, trace=1):
     (on Mac, install pdftotext as part of "poppler tools")
     otherwise, we use pdfminer
     """
-    if trace: print('!!! ENTER pdf2text')
-    try:
-        txt = "__temp__.txt"
-        pdf = "__temp__.pdf"
-        if not isinstance(pdf_or_stream, str):
-            bytes = pdf_or_stream.read()
-            with open(pdf, 'wb') as g:
-                g.write(bytes)
-        else:
-            pdf = pdf_or_stream
 
-        subprocess.run(["pdftotext", "-q", pdf, txt])
+    if exists_file('/usr/bin/pdftotext') or exists_file('/opt/local/bin/pdftotext'):
+        if trace: print('!!! ENTER pdf2text')
+        try:
+            txt = "__temp__.txt"
+            pdf = "__temp__.pdf"
+            if not isinstance(pdf_or_stream, str):
+                bytes = pdf_or_stream.read()
+                with open(pdf, 'wb') as g:
+                    g.write(bytes)
+            else:
+                pdf = pdf_or_stream
 
-        if exists_file(pdf): remove_file(pdf)
-        text = file2text(txt)
-        remove_file(txt)
-        if trace: print('!!! pdftotext used')
-    except FileNotFoundError:
+            subprocess.run(["pdftotext", "-q", pdf, txt])
+
+            if exists_file(pdf): remove_file(pdf)
+            text = file2text(txt)
+            remove_file(txt)
+            if trace: print('!!! pdftotext used')
+        except FileNotFoundError:
+            text = extract_text(pdf_or_stream)
+            if trace: print('!!! pdftotext failed, pdfminer used')
+    else:
         text = extract_text(pdf_or_stream)
-        if trace: print('!!! pdfminer used')
+        if trace: print('!!! only pdfminer available, used')
 
     text = pdf_cleaner(text, minline=minline)
     if trace: print('!!! EXITED pdf2text', len(text))
