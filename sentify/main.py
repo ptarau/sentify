@@ -128,15 +128,18 @@ def pdf2text(pdf_or_stream, minline=4, trace=1):
     otherwise, we use pdfminer
     """
 
-    if exists_file('/usr/bin/pdftotext') or exists_file('/opt/local/bin/pdftotext'):
+    if ((exists_file('/usr/bin/pdftotext')
+        or exists_file('/opt/local/bin/pdftotext'))
+        or exists_file('/opt/homebrew/bin//pdftotext')):
+
         if trace: print('!!! ENTER pdf2text')
         try:
             txt = "__temp__.txt"
             pdf = "__temp__.pdf"
             if not isinstance(pdf_or_stream, str):
-                bytes = pdf_or_stream.read()
+                bs = pdf_or_stream.read()
                 with open(pdf, 'wb') as g:
-                    g.write(bytes)
+                    g.write(bs)
             else:
                 pdf = pdf_or_stream
 
