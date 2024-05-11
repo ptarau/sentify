@@ -80,7 +80,7 @@ def sent_cleaner(sents):
         xs = [x.strip() for x in xs if x.isalnum() or x in keep]
         cleaned = len(xs)
 
-        if cleaned > 5 - cap and cleaned / raw > 0.8 - cap / 10 and len(xs[-1]) > 3:
+        if cleaned > 5 - cap and cleaned / raw > 0.8 - cap / 10: # and len(xs[-1]) > 3:
             clean = " ".join(xs)
             cleans.append(clean + ".")
     if not cleans:
