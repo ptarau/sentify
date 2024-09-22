@@ -14,24 +14,6 @@ class Segmenter:
         self.nlp = pysbd.Segmenter(language=lang, clean=False)
         self.times = Counter()
 
-    """
-    def chunkify(self, text):
-        tlen = len(text)
-        if text.count('.\n\n') * self.max_chunk_size > tlen:
-            # split in paragraphs - simple and easy
-            chunks = text.split('.\n\n')
-        else:
-            # we do it artificially to esnure tools are not overwhelmed
-            chunks = []
-            advance = 0
-            while advance < tlen:
-                chunk = text[advance:advance + self.max_chunk_size]
-                advance += self.max_chunk_size
-                chunks.append(chunk)
-            #chunks.append()
-        print("*** TEXT LEN:",tlen,"CHUNKS:", len(chunks))
-        return chunks
-    """
 
     def chunkify(self, text):
         # Split the text into chunks of self.max_chunk_size
