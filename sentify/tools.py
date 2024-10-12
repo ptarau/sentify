@@ -63,13 +63,15 @@ def is_capitalized(s):
     return s and s[0] == s[0].capitalize()
 
 
-def sent_cleaner(sents):
+def sent_cleaner(sents, minlen=10):
     cleans = []
     good = "'~:;=/*()[]{},.?!-+" + '"'
     keep = "$%"
 
     for s in sents:
         s = s.strip()
+        if len(s)<minlen:
+            continue
         cap = int(is_capitalized(s))
         for g in good:
             s = s.replace(g, ' ')

@@ -33,7 +33,7 @@ class Segmenter:
             chunk = " ".join(chunk.split())
             sents = self.nlp.segment(chunk)
             sentss.append(sents)
-        print('!!! TEXT:', len(text), 'CHUNKS:', len(chunks), 'SENTS:', sum(map(len, sentss)))
+        # print('!!! TEXT:', len(text), 'CHUNKS:', len(chunks), 'SENTS:', sum(map(len, sentss)))
         assert sentss, f"No good sentences after preprocessing text of len={len(text)}"
         return sentss
 
