@@ -18,7 +18,7 @@ class Segmenter:
     def chunkify(self, text):
         # Split the text into chunks of self.max_chunk_size
         chunks = [text[i:i + self.max_chunk_size] for i in range(0, len(text), self.max_chunk_size)]
-        print("*** TEXT LEN:", len(text), "CHUNKS:", len(chunks))
+        #print("*** TEXT LEN:", len(text), "CHUNKS:", len(chunks))
         return chunks
 
     def preprocess(self, text):
