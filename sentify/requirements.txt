@@ -3,3 +3,6 @@ smart_open
 Wikipedia-API
 twine
 pysbd
+python-docx
+openpyxl
+pandas
