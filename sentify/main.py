@@ -161,8 +161,8 @@ def pdf2text(pdf_or_stream, minline=4, trace=1):
             if not isinstance(pdf_or_stream, str):
                 if exists_file(pdf):
                     remove_file(pdf)
-                if exists_file(txt):
-                    remove_file(txt)
+            if exists_file(txt):
+                remove_file(txt)
             if trace:
                 print("!!! pdftotext used")
         except FileNotFoundError:
